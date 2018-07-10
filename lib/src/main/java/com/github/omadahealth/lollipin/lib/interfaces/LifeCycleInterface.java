@@ -17,11 +17,6 @@ public interface LifeCycleInterface {
     public void onActivityResumed(Activity activity);
 
     /**
-     * Called in {@link Activity#onUserInteraction()}
-     */
-    public void onActivityUserInteraction(Activity activity);
-
-    /**
      * Called in {@link android.app.Activity#onPause()}
      */
     public void onActivityPaused(Activity activity);

@@ -380,14 +380,7 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
         String clazzName = activity.getClass().getName();
         Log.d(TAG, "onActivityPaused " + clazzName);
 
-        if (!shouldLockSceen(activity) && !(activity instanceof AppLockActivity)) {
-            setLastActiveMillis();
-        }
-    }
-
-    @Override
-    public void onActivityUserInteraction(Activity activity) {
-        if (onlyBackgroundTimeout() && !shouldLockSceen(activity) && !(activity instanceof AppLockActivity)) {
+        if ((onlyBackgroundTimeout() || !shouldLockSceen(activity)) && !(activity instanceof AppLockActivity)) {
             setLastActiveMillis();
         }
     }
