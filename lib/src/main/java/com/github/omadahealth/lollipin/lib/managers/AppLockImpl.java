@@ -26,7 +26,7 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
     /**
      * The {@link android.content.SharedPreferences} key used to store the password
      */
-    private static final String PASSWORD_PREFERENCE_KEY = "PASSCODE";
+    private static final String PASSWORD_PREFERENCE_KEY           = "PASSCODE";
     /**
      * The {@link android.content.SharedPreferences} key used to store the {@link Algorithm}
      */
@@ -35,6 +35,11 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
      * The {@link android.content.SharedPreferences} key used to store the last active time
      */
     private static final String LAST_ACTIVE_MILLIS_PREFERENCE_KEY = "LAST_ACTIVE_MILLIS";
+
+    /**
+     * The {@link android.content.SharedPreferences} key used to know if user has to force introduce pin
+     */
+    private static final String BLOCKING_STATE                = "BLOCKING_STATE";
     /**
      * The {@link android.content.SharedPreferences} key used to store the timeout
      */
@@ -42,24 +47,24 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
     /**
      * The {@link android.content.SharedPreferences} key used to store the logo resource id
      */
-    private static final String LOGO_ID_PREFERENCE_KEY = "LOGO_ID_PREFERENCE_KEY";
+    private static final String LOGO_ID_PREFERENCE_KEY        = "LOGO_ID_PREFERENCE_KEY";
     /**
      * The {@link android.content.SharedPreferences} key used to store the forgot option
      */
-    private static final String SHOW_FORGOT_PREFERENCE_KEY = "SHOW_FORGOT_PREFERENCE_KEY";
+    private static final String SHOW_FORGOT_PREFERENCE_KEY    = "SHOW_FORGOT_PREFERENCE_KEY";
 
     /**
      * The {@link android.content.SharedPreferences} key used to store the only background timeout option
      */
-    private static final String ONLY_BACKGROUND_TIMEOUT_PREFERENCE_KEY = "ONLY_BACKGROUND_TIMEOUT_PREFERENCE_KEY";
+    private static final String ONLY_BACKGROUND_TIMEOUT_PREFERENCE_KEY  = "ONLY_BACKGROUND_TIMEOUT_PREFERENCE_KEY";
     /**
      * The {@link SharedPreferences} key used to store whether the user has backed out of the {@link AppLockActivity}
      */
-    private static final String PIN_CHALLENGE_CANCELLED_PREFERENCE_KEY = "PIN_CHALLENGE_CANCELLED_PREFERENCE_KEY";
+    private static final String PIN_CHALLENGE_CANCELLED_PREFERENCE_KEY  = "PIN_CHALLENGE_CANCELLED_PREFERENCE_KEY";
     /**
      * The {@link android.content.SharedPreferences} key used to store the dynamically generated password salt
      */
-    private static final String PASSWORD_SALT_PREFERENCE_KEY = "PASSWORD_SALT_PREFERENCE_KEY";
+    private static final String PASSWORD_SALT_PREFERENCE_KEY            = "PASSWORD_SALT_PREFERENCE_KEY";
     /**
      * The {@link SharedPreferences} key used to store whether the caller has enabled fingerprint authentication.
      * This value defaults to true for backwards compatibility.
@@ -68,19 +73,19 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
     /**
      * The default password salt
      */
-    private static final String DEFAULT_PASSWORD_SALT = "7xn7@c$";
+    private static final String DEFAULT_PASSWORD_SALT                   = "7xn7@c$";
     /**
      * The key algorithm used to generating the dynamic salt
      */
-    private static final String KEY_ALGORITHM = "PBEWithMD5AndDES";
+    private static final String KEY_ALGORITHM                           = "PBEWithMD5AndDES";
     /**
      * The key length of the salt
      */
-    private static final int KEY_LENGTH = 256;
+    private static final int    KEY_LENGTH                              = 256;
     /**
      * The number of iterations used to generate a dynamic salt
      */
-    private static final int KEY_ITERATIONS = 20;
+    private static final int    KEY_ITERATIONS                          = 20;
 
     /**
      * The {@link android.content.SharedPreferences} used to store the password, the last active time etc...
@@ -228,14 +233,14 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
         PinCompatActivity.clearListeners();
         PinFragmentActivity.clearListeners();
         mSharedPreferences.edit().remove(PASSWORD_PREFERENCE_KEY)
-                .remove(LAST_ACTIVE_MILLIS_PREFERENCE_KEY)
-                .remove(PASSWORD_ALGORITHM_PREFERENCE_KEY)
-                .remove(TIMEOUT_MILLIS_PREFERENCE_KEY)
-                .remove(LOGO_ID_PREFERENCE_KEY)
-                .remove(SHOW_FORGOT_PREFERENCE_KEY)
-                .remove(FINGERPRINT_AUTH_ENABLED_PREFERENCE_KEY)
-                .remove(ONLY_BACKGROUND_TIMEOUT_PREFERENCE_KEY)
-                .apply();
+                          .remove(LAST_ACTIVE_MILLIS_PREFERENCE_KEY)
+                          .remove(PASSWORD_ALGORITHM_PREFERENCE_KEY)
+                          .remove(TIMEOUT_MILLIS_PREFERENCE_KEY)
+                          .remove(LOGO_ID_PREFERENCE_KEY)
+                          .remove(SHOW_FORGOT_PREFERENCE_KEY)
+                          .remove(FINGERPRINT_AUTH_ENABLED_PREFERENCE_KEY)
+                          .remove(ONLY_BACKGROUND_TIMEOUT_PREFERENCE_KEY)
+                          .apply();
     }
 
     @Override
@@ -260,6 +265,18 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putLong(LAST_ACTIVE_MILLIS_PREFERENCE_KEY, System.currentTimeMillis());
         editor.apply();
+    }
+
+    @Override
+    public void setBlockingState(boolean show) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putBoolean(BLOCKING_STATE, show);
+        editor.apply();
+    }
+
+    @Override
+    public boolean getBlockingState() {
+        return mSharedPreferences.getBoolean(BLOCKING_STATE, false);
     }
 
     @Override
@@ -358,6 +375,10 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
             return false;
         }
 
+        if (getBlockingState()) {
+            return true;
+        }
+
         // no enough timeout
         long lastActiveMillis = getLastActiveMillis();
         long passedTime = System.currentTimeMillis() - lastActiveMillis;
@@ -368,6 +389,7 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
             return false;
         }
 
+        setBlockingState(true);
         return true;
     }
 
