@@ -155,6 +155,8 @@ public abstract class AppLock {
      * and {@link com.github.omadahealth.lollipin.lib.interfaces.LifeCycleInterface#onActivityResumed(android.app.Activity)}
      */
     public abstract void setLastActiveMillis();
+    public abstract void setBlockingState(boolean show);
+    public abstract boolean getBlockingState();
 
     /**
      * Set the passcode (store his SHA1 into {@link android.content.SharedPreferences}) using the
