@@ -328,7 +328,6 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
             case AppLock.UNLOCK_PIN:
                 if (mLockManager.getAppLock().checkPasscode(mPinCode)) {
                     setResult(RESULT_OK);
-                    mLockManager.getAppLock().setBlockingState(false);
                     onPinCodeSuccess();
                     finish();
                 } else {
@@ -406,6 +405,7 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
         isCodeSuccessful = true;
         onPinSuccess(mAttempts);
         mAttempts = 1;
+        mLockManager.getAppLock().setBlockingState(false);
     }
 
     /**
