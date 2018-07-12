@@ -165,6 +165,12 @@ public abstract class AppLock {
     public abstract boolean setPasscode(String passcode);
 
     /**
+     * Set the SHA1 of passcode
+     */
+    public abstract void setPasscodeHash(String passcode);
+    public abstract String getPasscodeHash();
+
+    /**
      * Check the {@link android.content.SharedPreferences} to see if fingerprint authentication is
      * enabled.
      */

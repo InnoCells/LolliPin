@@ -312,12 +312,27 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
             passcode = salt + passcode + salt;
             setAlgorithm(Algorithm.SHA256);
             passcode = Encryptor.getSHA(passcode, Algorithm.SHA256);
-            editor.putString(PASSWORD_PREFERENCE_KEY, passcode);
-            editor.apply();
-            this.enable();
+            setPasscodeHashInternal(passcode, editor);
         }
 
         return true;
+    }
+
+    private void setPasscodeHashInternal(String passcode, SharedPreferences.Editor editor) {
+        editor.putString(PASSWORD_PREFERENCE_KEY, passcode);
+        editor.apply();
+        this.enable();
+    }
+
+    @Override
+    public void setPasscodeHash(String passcode) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        setPasscodeHashInternal(passcode, editor);
+    }
+
+    @Override
+    public String getPasscodeHash() {
+        return mSharedPreferences.getString(PASSWORD_PREFERENCE_KEY, "");
     }
 
     /**
