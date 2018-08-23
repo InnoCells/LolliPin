@@ -31,24 +31,23 @@ import java.util.List;
  */
 public abstract class AppLockActivity extends PinActivity implements KeyboardButtonClickedListener, View.OnClickListener, FingerprintUiHelper.Callback {
 
-    public static final String TAG = AppLockActivity.class.getSimpleName();
-    public static final String ACTION_CANCEL = TAG + ".actionCancelled";
-    private static final int DEFAULT_PIN_LENGTH = 4;
+    public static final  String TAG                = AppLockActivity.class.getSimpleName();
+    public static final  String ACTION_CANCEL      = TAG + ".actionCancelled";
+    private static final int    DEFAULT_PIN_LENGTH = 4;
 
-    protected TextView mStepTextView;
-    protected TextView mForgotTextView;
+    protected TextView         mStepTextView;
+    protected TextView         mForgotTextView;
     protected PinCodeRoundView mPinCodeRoundView;
-    protected KeyboardView mKeyboardView;
-    protected ImageView mFingerprintImageView;
-    protected TextView mFingerprintTextView;
+    protected KeyboardView     mKeyboardView;
+    protected ImageView        mFingerprintImageView;
+    protected TextView         mFingerprintTextView;
 
     protected LockManager mLockManager;
 
-
-    protected FingerprintManager mFingerprintManager;
+    protected FingerprintManager  mFingerprintManager;
     protected FingerprintUiHelper mFingerprintUiHelper;
 
-    protected int mType = AppLock.UNLOCK_PIN;
+    protected int mType     = AppLock.UNLOCK_PIN;
     protected int mAttempts = 1;
     protected String mPinCode;
 
@@ -144,8 +143,11 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
             mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
             mFingerprintUiHelper = new FingerprintUiHelper.FingerprintUiHelperBuilder(mFingerprintManager).build(mFingerprintImageView, mFingerprintTextView, this);
             try {
-            if (mFingerprintManager.isHardwareDetected() && mFingerprintUiHelper.isFingerprintAuthAvailable()
-                    && mLockManager.getAppLock().isFingerprintAuthEnabled()) {
+                if (mFingerprintManager != null
+                        && mFingerprintManager.isHardwareDetected()
+                        && mFingerprintManager.hasEnrolledFingerprints()
+                        && mFingerprintUiHelper.isFingerprintAuthAvailable()
+                        && mLockManager.getAppLock().isFingerprintAuthEnabled()) {
                     mFingerprintImageView.setVisibility(View.VISIBLE);
                     mFingerprintTextView.setVisibility(View.VISIBLE);
                     mFingerprintUiHelper.startListening();
@@ -218,7 +220,7 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
         return getString(R.string.pin_code_forgot_text);
     }
 
-    private void setForgotTextVisibility(){
+    private void setForgotTextVisibility() {
         mForgotTextView.setVisibility(mLockManager.getAppLock().shouldShowForgot(mType) ? View.VISIBLE : View.GONE);
     }
 
@@ -415,7 +417,6 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
         mPinCode = pinCode;
         mPinCodeRoundView.refresh(mPinCode.length());
     }
-
 
     /**
      * Returns the type of this {@link com.github.omadahealth.lollipin.lib.managers.AppLockActivity}
