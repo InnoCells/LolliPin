@@ -245,7 +245,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
             mCipher.init(Cipher.ENCRYPT_MODE, key);
             return true;
         } catch (NoSuchPaddingException | KeyStoreException | CertificateException | UnrecoverableKeyException | IOException
-                | NoSuchAlgorithmException | InvalidKeyException e) {
+                | NoSuchAlgorithmException | InvalidKeyException | IllegalStateException e) {
             return false;
         }
     }
@@ -273,7 +273,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
                     .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
                     .build());
             mKeyGenerator.generateKey();
-        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
+        } catch (NoSuchProviderException | NoSuchAlgorithmException | InvalidAlgorithmParameterException | IllegalStateException e) {
             throw new RuntimeException(e);
         }
     }
